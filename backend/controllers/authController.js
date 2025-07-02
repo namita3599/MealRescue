@@ -26,7 +26,14 @@ export const register = async (req, res) => {
       expiresIn: '3d',
     });
 
-    res.status(201).json({ user: { id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role }, token });
+    res.status(201).json({ 
+      user: {
+       id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role 
+      },
+      token });
   } catch (err) {
     res.status(500).json({ message: 'Registration failed', error: err.message });
   }
@@ -46,8 +53,16 @@ export const login = async (req, res) => {
       expiresIn: '3d',
     });
 
-    res.status(200).json({ user: { id: user._id, name: user.name, email: user.email, role: user.role }, token });
+    res.status(200).json({ 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role 
+      }, 
+        token });
   } catch (err) {
     res.status(500).json({ message: 'Login failed', error: err.message });
   }
+
 };
