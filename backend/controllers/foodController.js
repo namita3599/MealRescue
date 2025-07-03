@@ -115,7 +115,7 @@ export const claimFoodPost = async (req, res) => {
       to: post.user.email,
       subject: 'Your Meal Rescue post has been claimed!',
       html: `<p>Hi ${post.user.name},</p>
-             <p>Your food post in <strong>${post.city}</strong> has been claimed by <strong>${req.user.name}</strong>.</p>
+             <p>Your food post <strong>"${post.title}"</strong> in <strong>${post.city}</strong> has been claimed by <strong>${req.user.name}</strong>.</p>
              <p>Thank you for contributing to reduce food waste! </p>`,
     };
 
@@ -134,3 +134,4 @@ export const claimFoodPost = async (req, res) => {
     res.status(500).json({ message: 'Failed to claim post', error: err.message });
   }
 };
+
