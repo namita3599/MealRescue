@@ -23,6 +23,7 @@ const foodPostSchema = new mongoose.Schema(
 
     claimed: { type: Boolean, default: false },
     claimedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // NGO ID
+    claimedAt: { type: Date }, 
   },
   { timestamps: true }
 );

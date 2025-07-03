@@ -88,3 +88,37 @@ export const deleteAccount = async (req, res) => {
         res.status(500).json({ message: 'Failed to delete account', error: err.message });
   }
 };
+
+// GET /api/profile/my-posts
+export const getMyPosts = async (req, res) => {
+    if (req.user.role !== 'user') {
+        return res.status(403).json({ message: 'Only non-ngo users can view their posts' });
+    }
+
+    try {
+        const posts = await FoodPost.find({ user: req.user._id })
+        .sort({ createdAt: -1 })
+        .populate('claimedBy', 'name email');
+
+        res.status(200).json(posts);
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch posts', error: err.message });
+    }
+};
+
+// GET /api/profile/claimed-posts
+export const getClaimedPosts = async (req, res) => {
+    if (req.user.role !== 'ngo') {
+        return res.status(403).json({ message: 'Only NGOs can view claimed posts' });
+    }
+
+    try {
+        const claimedPosts = await FoodPost.find({ claimedBy: req.user._id })
+        .sort({ claimedAt: -1 })
+        .populate('user', 'name email');
+
+        res.status(200).json(claimedPosts);
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to fetch claimed posts', error: err.message });
+    }
+};

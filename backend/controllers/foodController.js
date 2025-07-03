@@ -68,12 +68,27 @@ export const createFoodPost = async (req, res) => {
 
 // GET /api/posts?city=CityName
 export const getFoodPostsByCity = async (req, res) => {
-  const { city } = req.query;
+  const { city, veg } = req.query;
+
+  if (req.user.role !== 'ngo') {
+    return res.status(403).json({ message: 'Only NGOs can view unclaimed posts' });
+  }
 
   try {
-    const posts = await FoodPost.find({ 
-      city: {$regex: new RegExp(`^${city}$`, 'i')}, 
-      claimed: false })
+
+    const query = {
+      city: { $regex: new RegExp(`^${city}$`, 'i') },
+      claimed: false,
+    };
+
+    if (veg?.toLowerCase() === 'veg') {
+      query.isVeg = true;
+    } else if (veg?.toLowerCase() === 'nonveg') {
+      query.isVeg = false;
+    }
+    // If veg is 'all' or not provided, no filter is added
+
+    const posts = await FoodPost.find(query)
       .populate('user', 'name email')
       .sort({ createdAt: -1 });
 
@@ -99,6 +114,7 @@ export const claimFoodPost = async (req, res) => {
 
     post.claimed = true;
     post.claimedBy = ngoId;
+    post.claimedAt = new Date();
     await post.save();
 
     //Email to user
