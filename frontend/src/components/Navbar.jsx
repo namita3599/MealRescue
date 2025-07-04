@@ -35,15 +35,12 @@ const Navbar = () => {
                   <Button color="inherit" component={Link} to="/create">
                     Create Post
                   </Button>
-                  <Button color="inherit" component={Link} to="/myposts">
-                    My Posts
-                  </Button>
                 </>
               )}
 
               {/*NGO Links */}
               {user.role === 'ngo' && (
-                <Button color="inherit" component={Link} to="/claimed">
+                <Button color="inherit" component={Link} to="/claimed-posts">
                   Claimed
                 </Button>
               )}

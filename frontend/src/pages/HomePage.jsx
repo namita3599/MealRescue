@@ -80,46 +80,6 @@ const HomePage = () => {
     );
   }
 
-  // Show different messages based on user role and search state
-  if (posts.length === 0) {
-    if (user.role === 'ngo' && !hasSearched) {
-      return (
-        <Container maxWidth="lg" sx={{ mt: 5 }}>
-          <Typography variant="h5" mb={3}>Search for Posts</Typography>
-          <Box mb={3} display="flex" gap={2}>
-            <input
-              type="text"
-              placeholder="Enter city"
-              value={cityQuery}
-              onChange={(e) => setCityQuery(e.target.value)}
-              // onKeyDown={(e) => {
-              //   if (e.key === "Enter") {
-              //     e.preventDefault();
-              //     fetchPosts(cityQuery);
-              //   }
-              // }}
-              style={{ padding: '8px', flex: 1 }}
-            />
-            <Button variant="contained" onClick={() => fetchPosts(cityQuery)}>
-              Search
-            </Button>
-          </Box>
-          <Typography variant="h6" align="center">
-            Enter a city name to search for unclaimed posts.
-          </Typography>
-        </Container>
-      );
-    } else {
-      return (
-        <Container maxWidth="lg" sx={{ mt: 5 }}>
-          <Typography variant="h6" align="center">
-            No posts found.
-          </Typography>
-        </Container>
-      );
-    }
-  }
-
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Typography variant="h5" mb={3}>
@@ -139,6 +99,19 @@ const HomePage = () => {
             Search
           </Button>
         </Box>
+
+      )}
+
+      {user.role === 'ngo' && !hasSearched && (
+        <Typography variant="h6" align="center" sx={{ width: "100%", mt: 2 }}>
+          Search for posts in your city to see available food.
+        </Typography>
+      )}
+
+      {user.role === 'ngo'&& hasSearched && posts.length === 0 && (
+        <Typography variant="h6" align="center" sx={{ width: "100%", mt: 2 }}>
+          No posts found.
+        </Typography>
       )}
 
       <Box
@@ -195,6 +168,30 @@ const HomePage = () => {
                 Quantity: {post.quantity}
               </Typography>
 
+              <Typography variant="body2">
+                Address: {post.address}
+              </Typography>
+
+
+            {!post.claimed && user.role === 'ngo' && (
+              <Button
+                variant="contained"
+                size="small"
+                color="success"
+                onClick={async () => {
+                  try {
+                    await postService.claimPost(post._id);
+                    fetchPosts(cityQuery); // Refresh list
+                  } catch (err) {
+                    console.error("Error claiming post:", err);
+                  }
+                }}
+                sx={{ mt: 1 }}
+                >
+                  Claim
+                </Button>
+              )}
+
               <Box mt={1}>
                 <Button
                   size="small"
@@ -220,6 +217,7 @@ const HomePage = () => {
                   </Box>
                 </Collapse>
               </Box>
+
             </CardContent>
           </Card>
         ))}

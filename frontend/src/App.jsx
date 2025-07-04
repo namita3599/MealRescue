@@ -23,7 +23,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/create" element={<CreatePostPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/claimed" element={<ClaimedPostsPage />} />
+        <Route path="/claimed-posts" element={<ClaimedPostsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

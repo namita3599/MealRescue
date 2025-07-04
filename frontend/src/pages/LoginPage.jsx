@@ -21,7 +21,7 @@ const LoginPage = () => {
     e.preventDefault();
     setError("");
 
-    console.log("Form data:", formData);
+    // console.log("Form data:", formData);
 
     try {
       const response = await authService.login(formData);
