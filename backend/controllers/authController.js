@@ -1,8 +1,16 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { registerSchema, loginSchema } from '../validators/authValidator.js';
 
 export const register = async (req, res) => {
+
+  // Joi validation
+  const { error } = registerSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   const { name, email, password, role } = req.body;
 
   try {
@@ -40,6 +48,13 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+
+  // Joi validation
+  const { error } = loginSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   const { email, password } = req.body;
 
   try {
