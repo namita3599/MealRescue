@@ -13,4 +13,21 @@ instance.interceptors.request.use((config) => {
   return config;
 });
 
+//Handle token expiry (or any 401 error)
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+
+      // Optional: redirect to login
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+
 export default instance;

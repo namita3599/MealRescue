@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react'; 
 import { TextField, Button, MenuItem, Typography, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom'; 
 import authService from '../services/authService';
+import { AuthContext } from "../context/AuthContext"; 
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +13,8 @@ const RegisterPage = () => {
   });
 
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const { login } = useContext(AuthContext); //extract login from context
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -20,14 +23,14 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
-
-    // console.log(formData);
 
     try {
       const res = await authService.register(formData);
-      setSuccess('Registered successfully.');
+      const { token, user } = res.data; // extract from response
+      login(token, user); // set context + localStorage
+      navigate('/'); 
     } catch (err) {
+      console.error(err);
       setError(err.response?.data?.message || 'Registration failed');
     }
   };
@@ -37,7 +40,6 @@ const RegisterPage = () => {
       <Typography variant="h5" mb={2}>Register</Typography>
 
       {error && <Typography color="error" mb={2}>{error}</Typography>}
-      {success && <Typography color="primary" mb={2}>{success}</Typography>}
 
       <form onSubmit={handleSubmit}>
         <TextField
