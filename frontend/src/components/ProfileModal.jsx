@@ -13,12 +13,12 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import { Edit as EditIcon } from "@mui/icons-material";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { AuthContext } from "../context/AuthContext";
 import axios from "../api/axios";
 
 const ProfileModal = ({ open, handleClose }) => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext);
 
   const [editName, setEditName] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
@@ -98,6 +98,18 @@ const ProfileModal = ({ open, handleClose }) => {
       setSuccess("");
     }
   };
+
+  const handleDeleteAccount = async () => {
+    if (!window.confirm("Are you sure you want to delete your account? This cannot be undone.")) return;
+
+    try {
+      await axios.delete("/profile/delete-account");
+      logout(); // from context
+    } catch (err) {
+      setError("Failed to delete account. Please try again.");
+    }
+  };
+
 
   const handleCancelName = () => {
     setEditName(false);
@@ -207,9 +219,19 @@ const ProfileModal = ({ open, handleClose }) => {
         </Stack>
       </DialogContent>
 
-      <DialogActions>
+      <DialogActions sx={{ justifyContent: "space-between", flexWrap: "wrap" }}>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleDeleteAccount}
+          startIcon={<DeleteIcon />}
+        >
+          Delete Account
+        </Button>
+
         <Button onClick={handleModalClose}>Close</Button>
       </DialogActions>
+
     </Dialog>
   );
 };
