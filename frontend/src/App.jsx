@@ -1,6 +1,7 @@
 import {React, useContext} from 'react';
 import { AuthContext } from "./context/AuthContext";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 // Pages 
 import HomePage from './pages/HomePage';
@@ -14,13 +15,14 @@ import LandingPage from "./pages/LandingPage";
 // Components
 import Navbar from './components/Navbar';
 
-function App() {
-
+const AppContent = () => {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/" && !user;
 
   return (
-    <Router>
-      <Navbar />
+    <>
+      {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={user ? <HomePage /> : <LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -29,9 +31,17 @@ function App() {
         <Route path="/claimed-posts" element={<ClaimedPostsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+    </>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
-}
+};
 
 export default App;
 

@@ -44,13 +44,11 @@ const ProfileModal = ({ open, handleClose }) => {
     resetFields();
     handleClose();
   };
-  
 
   const handleNameUpdate = async () => {
     try {
-      setError(""); // Clear any previous errors
-      setSuccess(""); // Clear any previous success messages
-      
+      setError("");
+      setSuccess("");
       await axios.patch("/profile/edit-name", { name });
       setUser((prev) => ({ ...prev, name }));
       setSuccess("Name updated successfully!");
@@ -64,11 +62,10 @@ const ProfileModal = ({ open, handleClose }) => {
 
   const handlePasswordUpdate = async () => {
     try {
-      setError(""); // Clear any previous errors
-      setSuccess(""); // Clear any previous success messages
-
+      setError("");
+      setSuccess("");
       await axios.patch("/profile/change-password", {
-        currentPassword: oldPassword, 
+        currentPassword: oldPassword,
         newPassword,
       });
       setSuccess("Password updated successfully!");
@@ -77,12 +74,9 @@ const ProfileModal = ({ open, handleClose }) => {
       setNewPassword("");
     } catch (err) {
       console.error("Password update error:", err);
-      
-      // Handle different error responses
       if (err.response) {
         const status = err.response.status;
         const message = err.response.data?.message || "Unknown error";
-        
         if (status === 401) {
           setError("Incorrect current password. Please try again.");
         } else if (status === 400) {
@@ -104,68 +98,81 @@ const ProfileModal = ({ open, handleClose }) => {
 
     try {
       await axios.delete("/profile/delete-account");
-      logout(); // from context
+      logout();
     } catch (err) {
       setError("Failed to delete account. Please try again.");
     }
   };
 
-
   const handleCancelName = () => {
     setEditName(false);
     setName(user?.name || "");
-    setError(""); // Clear error message
-    setSuccess(""); // Clear success message
+    setError("");
+    setSuccess("");
   };
 
   const handleCancelPassword = () => {
     setEditPassword(false);
     setOldPassword("");
     setNewPassword("");
-    setError(""); // Clear error message
-    setSuccess(""); // Clear success message
+    setError("");
+    setSuccess("");
   };
 
   return (
-    <Dialog open={open}
-     onClose={handleModalClose} 
-     fullWidth maxWidth="sm" 
-     disableRestoreFocus={true}
-     keepMounted={false} >
+    <Dialog
+      open={open}
+      onClose={handleModalClose}
+      fullWidth
+      maxWidth="sm"
+      disableRestoreFocus={true}
+      keepMounted={false}
+    >
       <DialogTitle>My Profile</DialogTitle>
       <DialogContent>
         <Divider sx={{ mb: 2 }} />
         <Stack spacing={3}>
           {/* NAME SECTION */}
-          <Box display="flex" alignItems="center" justifyContent="space-between">
-            {!editName ? (
-              <>
-                <Typography>
-                  <strong>Name:</strong> {user?.name}
-                </Typography>
-                <IconButton onClick={() => setEditName(true)} size="small">
-                  <EditIcon />
-                </IconButton>
-              </>
-            ) : (
-              <>
-                <TextField
-                  label="Edit Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  fullWidth
-                />
-                <Box display="flex" gap={1} mt={1}>
-                  <Button variant="outlined" onClick={handleCancelName}>
-                    Cancel
-                  </Button>
-                  <Button variant="contained" onClick={handleNameUpdate}>
-                    Save
-                  </Button>
-                </Box>
-              </>
-            )}
-          </Box>
+          {!editName ? (
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-between"
+              gap={1}
+              flexWrap="wrap"
+            >
+              <Typography>
+                <strong>Name:</strong> {user?.name}
+              </Typography>
+              <IconButton onClick={() => setEditName(true)} size="small">
+                <EditIcon />
+              </IconButton>
+            </Box>
+          ) : (
+            <Box>
+              <TextField
+                variant="outlined"
+                label="Edit Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                fullWidth
+              />
+              <Box
+                display="flex"
+                flexDirection={{ xs: "column", sm: "row" }}
+                gap={1}
+                mt={1}
+              >
+                <Button variant="outlined" onClick={handleCancelName}>
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleNameUpdate}>
+                  Save
+                </Button>
+              </Box>
+            </Box>
+          )}
 
           {/* EMAIL SECTION */}
           <Typography>
@@ -190,6 +197,7 @@ const ProfileModal = ({ open, handleClose }) => {
           {editPassword && (
             <Stack spacing={2}>
               <TextField
+                variant="outlined"
                 label="Current Password"
                 type="password"
                 fullWidth
@@ -197,13 +205,18 @@ const ProfileModal = ({ open, handleClose }) => {
                 onChange={(e) => setOldPassword(e.target.value)}
               />
               <TextField
+                variant="outlined"
                 label="New Password"
                 type="password"
                 fullWidth
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
-              <Box display="flex" gap={1}>
+              <Box
+                display="flex"
+                flexDirection={{ xs: "column", sm: "row" }}
+                gap={1}
+              >
                 <Button variant="outlined" onClick={handleCancelPassword}>
                   Cancel
                 </Button>
@@ -231,7 +244,6 @@ const ProfileModal = ({ open, handleClose }) => {
 
         <Button onClick={handleModalClose}>Close</Button>
       </DialogActions>
-
     </Dialog>
   );
 };

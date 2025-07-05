@@ -1,5 +1,5 @@
 import {React, useContext, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box , useTheme, useMediaQuery} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import ProfileModal from '../components/ProfileModal';
@@ -8,6 +8,8 @@ const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [openProfileModal, setOpenProfileModal] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleOpenProfile = () => {
     setTimeout(() => {
@@ -23,16 +25,23 @@ const Navbar = () => {
   return (
     <>
     <AppBar position="static">
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* App Logo/Name */}
-        <Typography
-          variant="h6"
-          component={Link}
-          to="/"
-          sx={{ textDecoration: 'none', color: 'inherit' }}
-        >
-          Meal Rescue
-        </Typography>
+      <Toolbar
+        sx={{
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "stretch" : "center",
+          justifyContent: "space-between",
+          gap: isMobile ? 2 : 0,
+          py: isMobile ? 2 : 1,
+        }}
+      >
+
+      <Box
+        component={Link}
+        to="/"
+        sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}
+      >
+      <img src="/whitelogo.png" alt="logo" style={{ width: 260, marginRight: 12 }} />
+    </Box>
 
         {/*Links */}
         <Box>

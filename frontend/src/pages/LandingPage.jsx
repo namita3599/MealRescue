@@ -7,7 +7,7 @@ const LandingPage = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundImage: "url('/bg-food.jpg')", //image path
+        backgroundImage: "url('/bg-food.png')", //image path
         backgroundSize: "cover",
         backgroundPosition: "center",
         display: "flex",
