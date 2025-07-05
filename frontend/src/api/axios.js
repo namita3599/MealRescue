@@ -17,13 +17,17 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
+
+    if (error.config?.skipAuth || error.config?.url?.includes('/profile/change-password')) {
+      return Promise.reject(error);
+    }
+
     if (error.response && error.response.status === 401) {
       // Token expired or invalid
       localStorage.removeItem('token');
       localStorage.removeItem('user');
 
-      // Optional: redirect to login
-      window.location.href = '/login';
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }

@@ -1,11 +1,19 @@
-import React, { useContext } from 'react';
+import {React, useContext, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import ProfileModal from '../components/ProfileModal';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+
+  const handleOpenProfile = () => {
+    setTimeout(() => {
+      setOpenProfileModal(true);
+    }, 0); // Let the stack clear first
+  };
 
   const handleLogout = () => {
     logout();
@@ -13,6 +21,7 @@ const Navbar = () => {
   };
 
   return (
+    <>
     <AppBar position="static">
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         {/* App Logo/Name */}
@@ -46,9 +55,9 @@ const Navbar = () => {
               )}
 
               {/* Common Links*/}
-              <Button color="inherit" component={Link} to="/profile">
-                Profile
-              </Button>
+                <Button color="inherit" onClick={handleOpenProfile}>
+                  Profile
+                </Button>
               <Button color="inherit" onClick={handleLogout}>
                 Logout
               </Button>
@@ -67,6 +76,14 @@ const Navbar = () => {
         </Box>
       </Toolbar>
     </AppBar>
+
+    {user && (
+      <ProfileModal
+        open={openProfileModal}
+        handleClose={() => setOpenProfileModal(false)}
+      />
+    )}
+    </>
   );
 };
 

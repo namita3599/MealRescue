@@ -36,9 +36,10 @@ export const editName = async (req, res) => {
     }
 };
 
-    export const changePassword = async (req, res) => {
-        const userId = req.user._id;
-        const { currentPassword, newPassword } = req.body;
+// PATCH /api/profile/change-password
+export const changePassword = async (req, res) => {
+    const userId = req.user._id;
+    const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
         return res.status(400).json({ message: 'Current and new passwords are required' });
