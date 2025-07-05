@@ -14,6 +14,11 @@ import {
 import { AuthContext } from "../context/AuthContext";
 import postService from "../services/postService";
 
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleString(); 
+};
+
 const ClaimedPosts = () => {
   const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
@@ -120,6 +125,14 @@ const ClaimedPosts = () => {
                 />
                 <Chip label="Claimed" color="warning" />
               </Box>
+
+              <Typography variant="body2" color="text.secondary">
+                Posted by: {post.user?.name || "Unknown"} ({post.user?.email})
+              </Typography>
+
+              <Typography variant="body2" color="text.secondary">
+                Posted at: {formatDate(post.createdAt)}
+              </Typography>
 
               <Typography variant="body2" mt={1}>
                 Quantity: {post.quantity}

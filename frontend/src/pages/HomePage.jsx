@@ -10,9 +10,15 @@ import {
   Box,
   Button,
   Collapse,
+  Switch
 } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import postService from "../services/postService";
+
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleString();
+};
 
 const HomePage = () => {
   const { user } = useContext(AuthContext);
@@ -22,6 +28,17 @@ const HomePage = () => {
 
   const [cityQuery, setCityQuery] = useState('');
   const [hasSearched, setHasSearched] = useState(false); 
+
+  const [showVeg, setShowVeg] = useState(true);
+  const [showNonVeg, setShowNonVeg] = useState(true);
+
+  const filteredPosts = posts.filter((post) => {
+  const isVeg = post.isVeg === true || post.isVeg === "true";
+  if (isVeg && showVeg) return true;
+  if (!isVeg && showNonVeg) return true;
+  return false;
+});
+
 
   const fetchPosts = async (city = "") => {
     setLoading(true);
@@ -80,25 +97,70 @@ const HomePage = () => {
     );
   }
 
-  return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h5" mb={3}>
-        {user.role === 'ngo' ? 'Unclaimed Posts' : 'Your Posts'}
-      </Typography>
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        <Typography variant="h5" mb={3}>
+          {user.role === 'ngo' ? 'Unclaimed Posts' : 'Your Posts'}
+        </Typography>
 
-      {user.role === 'ngo' && (
-        <Box mb={3} display="flex" gap={2}>
-          <input
-            type="text"
-            placeholder="Enter city"
-            value={cityQuery}
-            onChange={(e) => setCityQuery(e.target.value)}
-            style={{ padding: '8px', flex: 1 }}
+        {user.role === 'ngo' && (
+
+          <>
+
+          <Box mb={3} display="flex" gap={2}>
+            <input
+              type="text"
+              placeholder="Enter city"
+              value={cityQuery}
+              onChange={(e) => setCityQuery(e.target.value)}
+              style={{ padding: '8px', flex: 1 }}
+            />
+            <Button variant="contained" onClick={() => fetchPosts(cityQuery)}>
+              Search
+            </Button>
+          </Box>
+
+          <Box display="flex" gap={4} alignItems="center" mb={3}>
+          <Box display="flex" alignItems="center" gap={1}>
+          <Typography>Veg</Typography>
+          <Switch
+            checked={showVeg}
+            onChange={() => {
+              if (!showNonVeg) return; // prevent both OFF
+              setShowVeg(!showVeg);
+            }}
+            sx={{
+              '& .MuiSwitch-switchBase.Mui-checked': {
+                color: 'green',
+              },
+              '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                backgroundColor: 'green',
+              },
+            }}
           />
-          <Button variant="contained" onClick={() => fetchPosts(cityQuery)}>
-            Search
-          </Button>
         </Box>
+
+          <Box display="flex" alignItems="center" gap={1}>
+            <Typography>Non-Veg</Typography>
+            <Switch
+              checked={showNonVeg}
+              onChange={() => {
+                if (!showVeg) return; // prevent both OFF
+                setShowNonVeg(!showNonVeg);
+              }}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: 'red',
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: 'red',
+                },
+              }}
+            />
+          </Box>
+        </Box>
+
+    </>
 
       )}
 
@@ -122,7 +184,7 @@ const HomePage = () => {
           justifyContent: "flex-start",
         }}
       >
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <Card
             key={post._id}
             sx={{
@@ -163,6 +225,16 @@ const HomePage = () => {
                   <Chip label="Unclaimed" color="primary" />
                 )}
               </Box>
+
+              <Typography variant="body2">
+                Posted on: {formatDate(post.createdAt)}
+              </Typography>
+
+              {user.role === "ngo" && post.user && (
+                <Typography variant="body2">
+                  Posted by: {post.user.name}
+                </Typography>
+              )}
 
               <Typography variant="body2" mt={1}>
                 Quantity: {post.quantity}
