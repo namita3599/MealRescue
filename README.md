@@ -105,7 +105,12 @@ CLOUDINARY_API_SECRET=your_api_secret
 Create a `.env` file in the `frontend/` directory with:
 
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_BACKEND_URL=http://localhost:5000/api
+```
+Or
+
+```env
+VITE_BACKEND_URL=https://mealrescue-backend.onrender.com/
 ```
 
 > All Vite environment variables must start with `VITE_`.
