@@ -67,8 +67,8 @@ MealRescue/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/meal-rescue.git
-cd meal-rescue
+git clone git@github.com:namita3599/MealRescue.git
+cd mealRescue
 ```
 
 ### 2. Install dependencies
