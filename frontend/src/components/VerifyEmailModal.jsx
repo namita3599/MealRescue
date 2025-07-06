@@ -10,7 +10,9 @@ import {
   Alert,
   Typography,
 } from "@mui/material";
-import authService from "../services/authService"; // Use authService instead of direct axios
+import authService from "../services/authService";
+
+//using authService for axios
 
 const VerifyEmailModal = ({ open, handleClose, onVerified, tempUser, actualOtp }) => {
   const [otpInput, setOtpInput] = useState("");
@@ -19,7 +21,6 @@ const VerifyEmailModal = ({ open, handleClose, onVerified, tempUser, actualOtp }
 
   const handleVerify = async () => {
     try {
-      // Use authService instead of direct axios
       const res = await authService.verifyOTP({
         otpInput,
         actualOtp,
