@@ -117,7 +117,7 @@ VITE_API_BASE_URL=http://localhost:5000/api
 #### Backend
 ```bash
 cd backend
-npm run dev
+npm start
 ```
 
 #### Frontend
