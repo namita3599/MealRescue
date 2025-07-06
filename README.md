@@ -110,7 +110,7 @@ VITE_BACKEND_URL=http://localhost:5000/api
 Or
 
 ```env
-VITE_BACKEND_URL=https://mealrescue-backend.onrender.com/
+VITE_BACKEND_URL=https://mealrescue-backend.onrender.com/api/
 ```
 
 > All Vite environment variables must start with `VITE_`.
