@@ -38,7 +38,11 @@ const VerifyEmailModal = ({ open, handleClose, onVerified, tempUser, actualOtp }
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+    <Dialog open={open} 
+    onClose={handleClose} 
+    fullWidth 
+    maxWidth="sm" 
+    disableRestoreFocus={true}>
       <DialogTitle>Email Verification</DialogTitle>
       <DialogContent>
         <Stack spacing={2}>
