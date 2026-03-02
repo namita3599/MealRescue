@@ -31,6 +31,7 @@ const HomePage = () => {
 
   const [showVeg, setShowVeg] = useState(true);
   const [showNonVeg, setShowNonVeg] = useState(true);
+  const [claimingId, setClaimingId] = useState(null);
 
   const filteredPosts = posts.filter((post) => {
   const isVeg = post.isVeg === true || post.isVeg === "true";
@@ -250,17 +251,28 @@ const HomePage = () => {
                 variant="contained"
                 size="small"
                 color="success"
+                disabled={claimingId === post._id}
                 onClick={async () => {
+                  setClaimingId(post._id);
                   try {
-                    await postService.claimPost(post._id);
-                    fetchPosts(cityQuery); // Refresh list
+                    console.log('Claiming post:', post._id);
+                    const response = await postService.claimPost(post._id);
+                    console.log('Claim response:', response);
+                    alert('Post claimed successfully!');
+                    await fetchPosts(cityQuery); // Refresh list
                   } catch (err) {
                     console.error("Error claiming post:", err);
+                    console.error("Error response:", err.response);
+                    const message = err.response?.data?.message || err.message || 'Failed to claim post';
+                    alert(message);
+                  } finally {
+                    console.log('Resetting claiming state');
+                    setClaimingId(null);
                   }
                 }}
                 sx={{ mt: 1 }}
                 >
-                  Claim
+                  {claimingId === post._id ? 'Claiming...' : 'Claim'}
                 </Button>
               )}
 
