@@ -127,7 +127,7 @@ export const claimFoodPost = async (req, res) => {
     });
 
     const mailOptions = {
-      from: process.env.MAIL_USER,
+      from: process.env.EMAIL_USER,
       to: post.user.email,
       subject: 'Your Meal Rescue post has been claimed!',
       html: `<p>Hi ${post.user.name},</p>
@@ -135,14 +135,13 @@ export const claimFoodPost = async (req, res) => {
              <p>Thank you for contributing to reduce food waste! </p>`,
     };
 
-    await transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.error('Email sending failed');
-      } else {
-        console.log('Email sent');
-      }
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log('Email sent successfully to:', post.user.email);
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError.message);
+      // Don't fail the claim if email fails
     }
-    );
 
     res.status(200).json({ message: 'Post claimed and email sent successfully' });
 
