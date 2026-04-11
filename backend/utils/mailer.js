@@ -42,7 +42,7 @@ export const sendMail = async (mailOptions) => {
     ...mailOptions,
   };
 
-  const maxRetries = Number(process.env.SMTP_MAX_RETRIES || 2);
+  const maxRetries = Number(process.env.SMTP_MAX_RETRIES || 0);
   let attempt = 0;
   let lastError = null;
   let info = null;
