@@ -25,6 +25,14 @@ export const register = async (req, res) => {
       otp,
     });
   } catch (err) {
+    if (err.code === 'ETIMEDOUT' || err.code === 'ESOCKET' || err.code === 'ECONNECTION') {
+      return res.status(504).json({ message: 'Email server timeout while sending OTP. Please try again.' });
+    }
+
+    if (err.code === 'EAUTH' || err.code === 'OTP_EMAIL_CONFIG_ERROR') {
+      return res.status(500).json({ message: 'OTP email configuration is invalid on server.' });
+    }
+
     res.status(500).json({ message: "Registration failed", error: err.message });
   }
 };
