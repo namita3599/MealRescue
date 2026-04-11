@@ -258,7 +258,7 @@ const HomePage = () => {
                     console.log('Claiming post:', post._id);
                     const response = await postService.claimPost(post._id);
                     console.log('Claim response:', response);
-                    alert('Post claimed successfully!');
+                    alert(response?.data?.message || 'Post claimed successfully!');
                     await fetchPosts(cityQuery); // Refresh list
                   } catch (err) {
                     console.error("Error claiming post:", err);
