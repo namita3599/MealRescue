@@ -10,7 +10,32 @@ import profileRoutes from './routes/profileRoutes.js';
 dotenv.config();
 const app = express();
 
-app.use(cors({ origin: '*' }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://meal-rescue.vercel.app',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow server-to-server calls and tools like curl/postman.
+    if (!origin) return callback(null, true);
+
+    const isVercelPreview = /^https:\/\/meal-rescue.*\.vercel\.app$/i.test(origin);
+
+    if (allowedOrigins.includes(origin) || isVercelPreview) {
+      return callback(null, true);
+    }
+
+    return callback(null, false);
+  },
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(express.json());
 
