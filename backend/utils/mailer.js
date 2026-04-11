@@ -7,15 +7,21 @@ const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASS = (process.env.EMAIL_PASS || '').replace(/\s+/g, '');
 const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp.gmail.com';
 const EMAIL_PORT = Number(process.env.EMAIL_PORT || 587);
+const EMAIL_SECURE = typeof process.env.EMAIL_SECURE === 'string'
+  ? process.env.EMAIL_SECURE.toLowerCase() === 'true'
+  : EMAIL_PORT === 465;
+const SMTP_REQUIRE_TLS = typeof process.env.SMTP_REQUIRE_TLS === 'string'
+  ? process.env.SMTP_REQUIRE_TLS.toLowerCase() === 'true'
+  : false;
 
 const transporter = nodemailer.createTransport({
   host: EMAIL_HOST,
   port: EMAIL_PORT,
-  secure: EMAIL_PORT === 465,
+  secure: EMAIL_SECURE,
   connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT_MS || 10000),
   greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT_MS || 10000),
   socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 15000),
-  requireTLS: EMAIL_PORT === 587,
+  requireTLS: SMTP_REQUIRE_TLS,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS,
