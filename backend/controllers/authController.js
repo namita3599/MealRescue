@@ -16,28 +16,23 @@ export const register = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    let emailDelivered = true;
-    let emailError = null;
-
-    try {
-      await sendOTP(email, otp);
-    } catch (mailErr) {
-      emailDelivered = false;
-      emailError = mailErr.message;
-      console.error('OTP send failed during register:', mailErr.code || 'UNKNOWN', mailErr.message);
-    }
+    await sendOTP(email, otp);
 
     // Send everything back to frontend (plain password - will be hashed by model)
     res.status(200).json({
-      message: emailDelivered
-        ? 'OTP sent. Please verify.'
-        : 'OTP generated, but email could not be delivered. Use the OTP shown below to verify now.',
+      message: 'OTP sent. Please verify.',
       tempUser: { name, email, password, role: role || 'user' },
       otp,
-      emailDelivered,
-      emailError,
     });
   } catch (err) {
+    if (err.code === 'ETIMEDOUT' || err.code === 'ESOCKET' || err.code === 'ECONNECTION' || err.code === 'EHOSTUNREACH' || err.code === 'ECONNRESET') {
+      return res.status(504).json({ message: 'Email server timeout while sending OTP. Please try again.' });
+    }
+
+    if (err.code === 'EAUTH' || err.code === 'OTP_EMAIL_CONFIG_ERROR') {
+      return res.status(500).json({ message: 'OTP email configuration is invalid on server.' });
+    }
+
     res.status(500).json({ message: "Registration failed", error: err.message });
   }
 };

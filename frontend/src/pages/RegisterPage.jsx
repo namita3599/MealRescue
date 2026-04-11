@@ -14,9 +14,7 @@ const RegisterPage = () => {
   });
 
   const [error, setError] = useState('');
-  const [infoMessage, setInfoMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [otp, setOtp] = useState('');
   const [tempUser, setTempUser] = useState(null);
   const [actualOtp, setActualOtp] = useState('');
 
@@ -30,7 +28,6 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setInfoMessage('');
 
     // Reset previous state on every submit
     setShowModal(false);
@@ -40,10 +37,6 @@ const RegisterPage = () => {
       // Save OTP and temp user details
       setActualOtp(res.data.otp);
       setTempUser(res.data.tempUser);
-
-      if (res.data.emailDelivered === false) {
-        setInfoMessage(`Email delivery failed. Continue verification using OTP: ${res.data.otp}`);
-      }
 
       setShowModal(true); // open verification modal
     } catch (err) {
@@ -80,7 +73,6 @@ const RegisterPage = () => {
       <Typography variant="h5" mb={2}>Register</Typography>
 
       {error && <Typography color="error" mb={2}>{error}</Typography>}
-      {infoMessage && <Typography color="warning.main" mb={2}>{infoMessage}</Typography>}
 
       <form onSubmit={handleSubmit}>
         <TextField

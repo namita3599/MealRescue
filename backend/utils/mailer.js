@@ -14,18 +14,24 @@ const SMTP_REQUIRE_TLS = typeof process.env.SMTP_REQUIRE_TLS === 'string'
   ? process.env.SMTP_REQUIRE_TLS.toLowerCase() === 'true'
   : false;
 
-const transporter = nodemailer.createTransport({
+const buildTransport = ({ port, secure, requireTLS }) => nodemailer.createTransport({
   host: EMAIL_HOST,
-  port: EMAIL_PORT,
-  secure: EMAIL_SECURE,
+  port,
+  secure,
   connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT_MS || 10000),
   greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT_MS || 10000),
   socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 15000),
-  requireTLS: SMTP_REQUIRE_TLS,
+  requireTLS,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS,
   },
+});
+
+const transporter = buildTransport({
+  port: EMAIL_PORT,
+  secure: EMAIL_SECURE,
+  requireTLS: SMTP_REQUIRE_TLS,
 });
 
 const RETRYABLE_EMAIL_CODES = new Set([
@@ -63,6 +69,29 @@ export const sendMail = async (mailOptions) => {
         throw err;
       }
       attempt += 1;
+    }
+  }
+
+  const shouldTryGmailAlternateMode =
+    !info &&
+    lastError &&
+    RETRYABLE_EMAIL_CODES.has(lastError.code) &&
+    EMAIL_HOST.toLowerCase() === 'smtp.gmail.com';
+
+  if (shouldTryGmailAlternateMode) {
+    const alternatePort = EMAIL_PORT === 465 ? 587 : 465;
+    const alternateSecure = alternatePort === 465;
+    const alternateRequireTLS = alternatePort === 587;
+
+    try {
+      const alternateTransport = buildTransport({
+        port: alternatePort,
+        secure: alternateSecure,
+        requireTLS: alternateRequireTLS,
+      });
+      info = await alternateTransport.sendMail(mergedOptions);
+    } catch (altErr) {
+      lastError = altErr;
     }
   }
 
